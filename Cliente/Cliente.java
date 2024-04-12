@@ -4,20 +4,27 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Scanner;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import Criptografia.CriptoRSA;
 
 public class Cliente implements Runnable {
     private Socket cliente;
-    private boolean conexao = true;
+    private boolean conexaoParaTrocaDeMensagens = true;
     private boolean conexaoTrocaDeChavesPublicaRSA = true;
+    private boolean conexaoParaDistribuicaoChaveAES = true;
     private PrintStream saida;
     
     private String ChavePublicafirewall;  
 
 
     private CriptoRSA criptoRSA = new CriptoRSA();
+
+    private SecretKey chaveAESFirewall;
 
 
 
@@ -37,6 +44,11 @@ public class Cliente implements Runnable {
             Scanner entrada = new Scanner(cliente.getInputStream());
 
             String mensagem;
+
+
+            //armazena as partes da chave publica do cliente
+            String letraE,LetraN, LetraEeLetraN;
+             
 
 
              //Troca de chaves publica do RSA entre cliente e firewall
@@ -70,35 +82,63 @@ public class Cliente implements Runnable {
                 //concateno ambos
                 LetraEeLetraN = letraE+ " " +LetraN;
                 
-                //Envia chave publica do cliente para o servidor.
+                //Envia chave publica do cliente para o firewall.
                 saida.println(LetraEeLetraN);
 
                 conexaoTrocaDeChavesPublicaRSA = false;
             }
 
 
+            //recebimento de chave do AES (cifrada em RSA) enviada pelo firewall
+            if (conexaoParaDistribuicaoChaveAES) {
+                
+                String m = entrada.nextLine();
+                
+                String chaveDecifrada = criptoRSA.desencriptar(m, criptoRSA.enviarD(), criptoRSA.enviarN());
 
-            while (conexao) {
+                byte[] chaveFinal = Base64.getDecoder().decode(chaveDecifrada);
+
+                chaveAESFirewall = new SecretKeySpec(chaveFinal, "AES");
+
+                conexaoParaDistribuicaoChaveAES = false;
+                    
+            };
+
+
+
+
+            while (conexaoParaTrocaDeMensagens) {
                 
 
                 // Envia mensagem para o firewall
-                System.out.println("Digite uma mensagem para enviar ao firewall: ");
-                mensagem = teclado.nextLine();
-                if (mensagem.equals("fim")) {
-                    conexao = false;
-                    break;
-                }
-                saida.println(mensagem);
+                
 
-                // Recebe mensagem do firewall
-                if (entrada.hasNextLine()) {
-                    mensagem = entrada.nextLine();
-                    if (mensagem.equals("fim")) {
-                        conexao = false;
-                        break;
-                    }
-                    System.out.println("Mensagem recebida do firewall: " + mensagem);
-                }
+
+
+
+
+
+
+
+
+                // // Envia mensagem para o firewall
+                // System.out.println("Digite uma mensagem para enviar ao firewall: ");
+                // mensagem = teclado.nextLine();
+                // if (mensagem.equals("fim")) {
+                //     conexaoParaTrocaDeMensagens = false;
+                //     break;
+                // }
+                // saida.println(mensagem);
+
+                // // Recebe mensagem do firewall
+                // if (entrada.hasNextLine()) {
+                //     mensagem = entrada.nextLine();
+                //     if (mensagem.equals("fim")) {
+                //         conexaoParaTrocaDeMensagens = false;
+                //         break;
+                //     }
+                //     System.out.println("Mensagem recebida do firewall: " + mensagem);
+                // }
             }
 
             // Fechar conexões

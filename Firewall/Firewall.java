@@ -5,15 +5,20 @@ import java.io.PrintStream;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Scanner;
 
+import javax.crypto.SecretKey;
+
 import Criptografia.CriptoRSA;
+import Criptografia.CriptografiaAES;
 
 public class Firewall implements Runnable {
     private Socket socketCliente;
     private Socket socketServidor;
     private boolean conexao = true;
     private boolean conexaoTrocaDeChavesRSA = true;
+    private boolean conexaoEnvioChaveAES = true;
 
     private BigInteger eChavefirewall;
     private BigInteger nChavefirewall;
@@ -21,6 +26,9 @@ public class Firewall implements Runnable {
     private String ChavePublicaCliente;
 
     private CriptoRSA criptoRSA = new CriptoRSA();
+
+    private CriptografiaAES criptoAES;
+    private SecretKey chaveAES;
 
     public Firewall(Socket cliente, Socket servidor) {
         this.socketCliente = cliente;
@@ -77,8 +85,34 @@ public class Firewall implements Runnable {
                 eCliente = new BigInteger(LetraECliente);
                 nCliente = new BigInteger(LetraNCliente);
                     
+
                 conexaoTrocaDeChavesRSA = false;
 
+            }
+
+
+            //envio(usando RSA) da chave AES para o cliente 
+            if (conexaoEnvioChaveAES) {
+
+                //gerar chave AES
+                try {
+                    chaveAES = criptoAES.gerarChave();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                byte[] chaveemBytes = chaveAES.getEncoded();
+
+                String chaveEmString = Base64.getEncoder().encodeToString(chaveemBytes);
+
+                String ChaveCifrada = criptoRSA.encriptar(chaveEmString, eCliente, nCliente);
+
+                saidaCliente.println(ChaveCifrada);
+            
+
+                conexaoEnvioChaveAES = false;
+                
             }
 
 
