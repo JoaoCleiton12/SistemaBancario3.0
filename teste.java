@@ -11,12 +11,13 @@ public class teste {
         CriptografiaAES criptaes = new CriptografiaAES();
 
         //texto de exemplo
-        String texto = "ola boa noite";
+        String texto = "joaocleiton idioma";
 
 
         System.out.println("texto original "+texto);
 
 
+        
         
         try {
             SecretKey chaveaes = criptaes.gerarChave();

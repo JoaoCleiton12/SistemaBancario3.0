@@ -11,6 +11,8 @@ public class Servidor implements Runnable {
     private PrintStream saida;
     private Scanner teclado;
 
+    SistemaBancario sistema;
+
     public Servidor(Socket c) {
         this.cliente = c;
     }
@@ -21,29 +23,50 @@ public class Servidor implements Runnable {
             saida = new PrintStream(cliente.getOutputStream());
             Scanner entrada = new Scanner(cliente.getInputStream());
 
-            String mensagem;
+            sistema = new SistemaBancario();
+
+            boolean resposta;
+
+            int opcao = -1;
+
+            String numConta;
+            String senha;
 
             while (conexao) {
                 
 
-                // Envia mensagem para o firewall
-                System.out.println("Digite uma mensagem para enviar ao firewall: ");
-                mensagem = "chavepublica";
-                if (mensagem.equals("fim")) {
-                    conexao = false;
-                    break;
-                }
-                saida.println(mensagem);
-
                 // Recebe mensagem do firewall e envia para o cliente
                 if (entrada.hasNextLine()) {
-                    mensagem = entrada.nextLine();
-                    if (mensagem.equals("fim")) {
-                        conexao = false;
-                        break;
+                    opcao = entrada.nextInt();
+
+                    //limpa o buffer
+                    entrada.nextLine();
+                    
+
+                    //fazer login
+                    if (opcao == 1) {
+                        
+                        numConta = entrada.nextLine();
+                        senha = entrada.nextLine();
+
+                        //acessar o banco de dados
+                       resposta = sistema.autenticarUser(numConta, senha);
+                        System.out.println("Login bem sucedido");
+                        saida.println(resposta);
+
                     }
-                    System.out.println("Mensagem recebida do firewall: " + mensagem);
+                    
                 }
+
+
+                // // Envia mensagem para o firewall
+                // System.out.println("Digite uma mensagem para enviar ao firewall: ");
+                // mensagem = "chavepublica";
+                // if (mensagem.equals("fim")) {
+                //     conexao = false;
+                //     break;
+                // }
+                // saida.println(mensagem);
             }
 
             // Fechar conexões
