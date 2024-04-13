@@ -75,7 +75,26 @@ public class Servidor implements Runnable {
 
                             //saque
                             if (operacao == 1) {
-                                System.out.println("Operação de saque em andamento..");
+                               
+
+                                entrada.nextLine();
+
+                                mensagem = entrada.nextLine();
+                                valor = Double.parseDouble(mensagem);
+
+                                if (valor <=sistema.saldo(numConta)) {
+
+                                    System.out.println("Operação de saque em andamento..");
+
+                                    sistema.saque(numConta, valor);
+
+                                    mensagemResposta = " Saldo atual:"+sistema.saldo(numConta);
+                                }else{
+                                    mensagemResposta = " Saldo insuficiente";
+                                }
+
+                                saida.println(mensagemResposta);
+                                
                             }
     
                             //depósito
@@ -118,7 +137,14 @@ public class Servidor implements Runnable {
 
                             //Investimentos
                             if (operacao == 5) {
-                                
+                                System.out.println("Operação de investimento em andamento..");
+
+                                int tipoivestimento = entrada.nextInt();
+
+                                String retorno = sistema.investimentos(numConta, tipoivestimento);
+
+                                saida.println(retorno);
+
                             }
 
 
