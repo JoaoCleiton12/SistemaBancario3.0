@@ -116,7 +116,7 @@ public class SistemaBancario {
 
             
 
-            retorno = "|Valor aplicado: "+listaContas.get(numeroConta).saldo()+"\n|Rendimento em 3 meses: "+ numeroFormatado+"\n|Rendimento em 6 meses: "+ numeroFormatado2+"\n|Rendimento em 12 meses: "+ numeroFormatado3+"\n";
+            retorno = "|Valor aplicado: "+listaContas.get(numeroConta).saldo()+"\n|Rendimento em 3 meses: "+ numeroFormatado+"\n|Rendimento em 6 meses: "+ numeroFormatado2+"\n|Rendimento em 12 meses: "+ numeroFormatado3;
         }
         else if (tipoInvestimento == 2) {
             double tresmesesRenda = listaContas.get(numeroConta).saldo(); 
@@ -144,7 +144,7 @@ public class SistemaBancario {
 
             
 
-            retorno = "|Valor aplicado: "+listaContas.get(numeroConta).saldo()+"\n|Rendimento em 3 meses: "+ numeroFormatado+"\n|Rendimento em 6 meses: "+ numeroFormatado2+"\n|Rendimento em 12 meses: "+ numeroFormatado3+"\n";
+            retorno = "|Valor aplicado: "+listaContas.get(numeroConta).saldo()+"\n|Rendimento em 3 meses: "+ numeroFormatado+"\n|Rendimento em 6 meses: "+ numeroFormatado2+"\n|Rendimento em 12 meses: "+ numeroFormatado3;
         }
         return retorno;
     }

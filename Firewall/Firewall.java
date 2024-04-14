@@ -184,10 +184,11 @@ public class Firewall implements Runnable {
                     //limoa o buffer da comunicação com o cliente
                     scannerCliente.nextLine();
 
-                    System.out.println(cabecalho);
+                    
                     //cliente quer tentar fazer login
                    if (cabecalho == 1) {
                     
+                    System.out.println("Operação de login..");
                                                 //Rotina de tratamento para fazer login
                                                 //RECEBER
                                                         //*******************************************************************************************************
@@ -241,20 +242,34 @@ public class Firewall implements Runnable {
 
                                                         //******************************************************************************************************
 
-                                                        if (loginCorreto) {
+                                                        
+
+                                                        //enviar para servidor e ver se o login bate 
+
+                                                        System.out.println(cabecalho);
+
+                                                        saidaServidor.println(cabecalho);
+                                                        saidaServidor.println(conta);
+                                                        saidaServidor.println(senha);
+
+                                                        boolean respostaBol = scannerServidor.nextBoolean();
+
+
+                                                        System.out.println(respostaBol);
+
+                                                        if (respostaBol) {
                                                             //envia para o servidor o login e a senha para ele verificar se consta na base de dados dele.
                                                                 //envia um código informando a operação fazer login, e envia o login e senha
 
-                                                            
-                                                                saidaServidor.println(cabecalho);
-                                                                saidaServidor.println(conta);
-                                                                saidaServidor.println(senha);
+                                                                System.out.println("Login feito..");
 
-                                                                boolean resposta = scannerServidor.nextBoolean();
+                                                               
+
+                                                               
                                                                 //limpa o buffer da comunicação com o servidor
                                                                 scannerServidor.nextLine();
 
-                                                                if (resposta) {
+                                                                if (respostaBol) {
                                                                     //cifra e envia uma resposta para o cliente, informando que o login foi validado.
 
 
@@ -325,7 +340,7 @@ public class Firewall implements Runnable {
                                                                 
                                                                                                                     escolha = Integer.parseInt(decifraAESdaMensagem);
                                                                                                                     
-                                                                                                                    System.out.println(escolha);
+                                                                                                                    
                                                                                                                 } catch (Exception e) {
                                                                                                                     
                                                                                                                     e.printStackTrace();
@@ -337,6 +352,8 @@ public class Firewall implements Runnable {
 
                                                                                         //saque
                                                                                         if (escolha == 1) {
+
+                                                                                            System.out.println("Operação de saque...");
                                                                                                 //RECEBER
                                                                                                 //*******************************************************************************************************
                                                                                                     //Código para receber mensagens do cliente
@@ -369,7 +386,7 @@ public class Firewall implements Runnable {
                                                                                                                             decifraAESdaMensagem = criptoAES.decifrar(MensagemAES, chaveAES);
                                                                         
                                                                                                                             valor = Double.parseDouble(decifraAESdaMensagem);
-                                                                                                                            System.out.println(valor);
+                                                                                                                            
                                                                                                                         
                                                                                                                         } catch (Exception e) {
                                                                                                                             
@@ -386,9 +403,7 @@ public class Firewall implements Runnable {
 
                                                                                                 String respostaSaque = scannerServidor.nextLine();
 
-                                                                                                System.out.println("****************");
-                                                                                                System.out.println(respostaSaque);
-                                                                                                System.out.println("****************");
+                                                                                                
 
                                                                                                 //envia resposta ao cliente
                                                                                                 
@@ -425,6 +440,7 @@ public class Firewall implements Runnable {
                                                                                         //depósito
                                                                                         if (escolha == 2) {
                                                                                             
+                                                                                            System.out.println("Operação de depósito..");
                                                                                                 //RECEBER
                                                                                                 //*******************************************************************************************************
                                                                                                     //Código para receber mensagens do cliente
@@ -457,7 +473,7 @@ public class Firewall implements Runnable {
                                                                                                                             decifraAESdaMensagem = criptoAES.decifrar(MensagemAES, chaveAES);
                                                                         
                                                                                                                             valor = Double.parseDouble(decifraAESdaMensagem);
-                                                                                                                            System.out.println(valor);
+                                                                                                                            
                                                                                                                         
                                                                                                                         } catch (Exception e) {
                                                                                                                             
@@ -475,9 +491,7 @@ public class Firewall implements Runnable {
                                                                                                 //recebe resposta do servidor
                                                                                                 String respostaDeposito = scannerServidor.nextLine();
                                                                                         
-                                                                                                System.out.println("****************");
-                                                                                                System.out.println(respostaDeposito);
-                                                                                                System.out.println("****************");
+                                                                                                
 
                                                                                                 //envia resposta ao cliente
                                                                                                 
@@ -512,12 +526,93 @@ public class Firewall implements Runnable {
 
                                                                                         //transferencia
                                                                                         if (escolha == 3) {
-                                                                                            
+
+                                                                                            System.out.println("Operação de transferencia..");
+                                                                                                    //RECEBER
+                                                                                                    //*******************************************************************************************************
+                                                                                                        //Código para receber mensagens do cliente
+                                                                                                    
+                                                                                                            //recebe mensagem AES
+                                                                                                            MensagemAES = scannerCliente.nextLine();
+
+                                                                                                            //recebe mensagem hash do aes cifrada com RSA
+                                                                                                            MensagemRSAComHash = scannerCliente.nextLine();
+
+
+                                                                                                                //Decifra RSA
+                                                                                                                //hash da mensagem
+                                                                                                                decifraRSAdaMensagem = criptoRSA.desencriptar(MensagemRSAComHash, eCliente, nCliente);
+
+                                                                                                                //faz o hash da mensagem recebida AES
+                                                                                                                hashDoTextoCifradoAES = ImplSHA3.resumo(MensagemAES.getBytes(ImplSHA3.UTF_8), algoritmoHash); //Ver possibilidade de mudar algoritmo hash
+
+                                                                                                                //armazena o resultado do hash no formato String
+                                                                                                                resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
+
+                                                                                                                String contaDestinoValor = "";
+                                                                                                                
+
+                                                                                                                //verifica se os hash são iguais
+                                                                                                                if (resultadoDoHash.equals(decifraRSAdaMensagem)) {
+                                                                                                                    //como os hash bateram, entao agora eu posso decifrar a mensagem AES e usa-la
+                                                                                                                    
+                                                                                                                        //Decifra AES
+                                                                                                                            try {
+                                                                                                                                decifraAESdaMensagem = criptoAES.decifrar(MensagemAES, chaveAES);
+                                                                            
+                                                                                                                                contaDestinoValor = decifraAESdaMensagem;
+                                                                                                                                
+                                                                                                                                
+                                                                                                                            
+                                                                                                                            } catch (Exception e) {
+                                                                                                                                
+                                                                                                                                e.printStackTrace();
+                                                                                                                            }
+                                                                                                                    
+                                                                                                                }
+
+                                                                                                    //******************************************************************************************************
+
+                                                                                                    saidaServidor.println(escolha);
+                                                                                                    saidaServidor.println(contaDestinoValor);
+
+                                                                                                    String respostaTransfe = scannerServidor.nextLine();
+
+                                                                                                    
+
+                                                                                                    //ENVIAR
+                                                                                                    //número para confimar que o login foi bem sucedido.
+                                                                                                    //-------------------------------------------------------------------------------------------------
+                                                                                                        //Envia para cliente mensagem cifrada em AES
+                                                                                                       
+
+                                                                                                        try {
+                                                                                                            cifrado = criptoAES.cifrar(respostaTransfe, chaveAES);
+                                                                                                        } catch (Exception e) {
+                                                                                                            // TODO Auto-generated catch block
+                                                                                                            e.printStackTrace();
+                                                                                                        }
+
+                                                                                                        saidaCliente.println(cifrado);
+                                                                        
+                                                                                                    
+                                                                                                        //Envia para cliente o hash cifrado em RSA, da mensagem cifrada em AES
+
+                                                                                                            //faz o hash do texto cifrado em AES
+                                                                                                            hashDoTextoCifradoAES = ImplSHA3.resumo(cifrado.getBytes(ImplSHA3.UTF_8), algoritmoHash);
+                                                                                                            resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
+
+                                                                                                            //cifra o hash com RSA
+                                                                                                            hashCifradaComRSA = criptoRSA.encriptar(resultadoDoHash, dChavefirewall, nChavefirewall);
+                                                                                                            saidaCliente.println(hashCifradaComRSA);
+                                                                                                    //-------------------------------------------------------------------------------------------------
+                                                                                                
                                                                                         }
 
                                                                                         //saldo
                                                                                         if (escolha == 4) {
                                                                                             
+                                                                                            System.out.println("Operação de saldo..");
                                                                                             
                                                                                                 //envia para o servidor
                                                                                                 saidaServidor.println(escolha);
@@ -525,9 +620,7 @@ public class Firewall implements Runnable {
                                                                                                 
                                                                                                 String respostaSaldo = scannerServidor.nextLine();
 
-                                                                                                System.out.println("****************");
-                                                                                                System.out.println(respostaSaldo);
-                                                                                                System.out.println("****************");
+                                                                                            
 
                                                                                                  //envia resposta ao cliente
                                                                                                 
@@ -563,6 +656,7 @@ public class Firewall implements Runnable {
                                                                                         //investimentos
                                                                                         if (escolha == 5) {
 
+                                                                                            System.out.println("Operação de investimentos..");
                                                                                                 //RECEBER
                                                                                                 //*******************************************************************************************************
                                                                                                     //Código para receber mensagens do cliente
@@ -584,7 +678,7 @@ public class Firewall implements Runnable {
                                                                                                             //armazena o resultado do hash no formato String
                                                                                                             resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
 
-                                                                                                            int tipoivestimento = 0;
+                                                        
 
                                                                                                             //verifica se os hash são iguais
                                                                                                             if (resultadoDoHash.equals(decifraRSAdaMensagem)) {
@@ -594,8 +688,8 @@ public class Firewall implements Runnable {
                                                                                                                         try {
                                                                                                                             decifraAESdaMensagem = criptoAES.decifrar(MensagemAES, chaveAES);
                                                                         
-                                                                                                                            tipoivestimento = Integer.parseInt(decifraAESdaMensagem);
-                                                                                                                            System.out.println(tipoivestimento);
+                                                                                                                            valor = Double.parseDouble(decifraAESdaMensagem);
+                                                                                                                            
                                                                                                                         
                                                                                                                         } catch (Exception e) {
                                                                                                                             
@@ -606,15 +700,46 @@ public class Firewall implements Runnable {
 
                                                                                                 //******************************************************************************************************
 
-                                                                                                saidaServidor.print(escolha);
-                                                                                                saidaServidor.println(tipoivestimento);
+                                                                                                //envia para servidor operação e os atributos necessários para fazer aquela operação
+                                                                                                saidaServidor.println(escolha);
+                                                                                                saidaServidor.println(valor+"");
+                                                                                            
+                                                                                                //recebe resposta do servidor
+                                                                                                String resposta1 = scannerServidor.nextLine();
+                                                                                                String resposta2 = scannerServidor.nextLine();
+                                                                                                String resposta3 = scannerServidor.nextLine();
+                                                                                                String resposta4 = scannerServidor.nextLine();
+                                                                                                String respostaFinal = resposta1+"\n"+resposta2+"\n"+resposta3+"\n"+resposta4+"\n";
+                                                                      
+                                                                                                //envia resposta ao cliente
+                                                                                                
+                                                                                                    //ENVIAR
+                                                                                                    //número para confimar que o login foi bem sucedido.
+                                                                                                    //-------------------------------------------------------------------------------------------------
+                                                                                                        //Envia para cliente mensagem cifrada em AES
+                                                                                                       
 
-                                                                                                String respostaInvestimento = scannerServidor.nextLine();
+                                                                                                        try {
+                                                                                                            cifrado = criptoAES.cifrar(respostaFinal, chaveAES);
+                                                                                                        } catch (Exception e) {
+                                                                                                            // TODO Auto-generated catch block
+                                                                                                            e.printStackTrace();
+                                                                                                        }
 
-                                                                                                System.out.println(respostaInvestimento);
+                                                                                                        saidaCliente.println(cifrado);
+                                                                        
+                                                                                                    
+                                                                                                        //Envia para cliente o hash cifrado em RSA, da mensagem cifrada em AES
 
-                                                                                                //continuar
+                                                                                                            //faz o hash do texto cifrado em AES
+                                                                                                            hashDoTextoCifradoAES = ImplSHA3.resumo(cifrado.getBytes(ImplSHA3.UTF_8), algoritmoHash);
+                                                                                                            resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
 
+                                                                                                            //cifra o hash com RSA
+                                                                                                            hashCifradaComRSA = criptoRSA.encriptar(resultadoDoHash, dChavefirewall, nChavefirewall);
+                                                                                                            saidaCliente.println(hashCifradaComRSA);
+                                                                                                    //-------------------------------------------------------------------------------------------------
+                                                                                                
 
 
                                                                                         }
@@ -623,19 +748,128 @@ public class Firewall implements Runnable {
 
                                                                 }
                                                             
-                                                        }else{
+                                                        }
+                                                        //Login falhou
+                                                        else{
+                                                            confimacao = 2;
+
+                                                            //ENVIAR
+                                                                            //número para confimar que o login foi bem sucedido.
+                                                                            //-------------------------------------------------------------------------------------------------
+                                                                                //Envia para cliente mensagem cifrada em AES
+                                                                                inteiroParaTexto = confimacao+"";
+
+                                                                                try {
+                                                                                    cifrado = criptoAES.cifrar(inteiroParaTexto, chaveAES);
+                                                                                } catch (Exception e) {
+                                                                                    // TODO Auto-generated catch block
+                                                                                    e.printStackTrace();
+                                                                                }
+
+                                                                                saidaCliente.println(cifrado);
+                                                
+                                                                            
+                                                                                //Envia para cliente o hash cifrado em RSA, da mensagem cifrada em AES
+
+                                                                                    //faz o hash do texto cifrado em AES
+                                                                                    hashDoTextoCifradoAES = ImplSHA3.resumo(cifrado.getBytes(ImplSHA3.UTF_8), algoritmoHash);
+                                                                                    resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
+
+                                                                                    //cifra o hash com RSA
+                                                                                    hashCifradaComRSA = criptoRSA.encriptar(resultadoDoHash, dChavefirewall, nChavefirewall);
+                                                                                    saidaCliente.println(hashCifradaComRSA);
+                                                                            //-------------------------------------------------------------------------------------------------
+
 
                                                         }
                    }
 
                    if (cabecalho == 2) {
-                    
+
+                    System.out.println("Operação de criar conta..");
+                                                                                                String mensagem = "";
+                                                                                                //RECEBER
+                                                                                                //*******************************************************************************************************
+                                                                                                    //Código para receber mensagens do cliente
+                                                                                                
+                                                                                                        //recebe mensagem AES
+                                                                                                        MensagemAES = scannerCliente.nextLine();
+
+                                                                                                        //recebe mensagem hash do aes cifrada com RSA
+                                                                                                        MensagemRSAComHash = scannerCliente.nextLine();
+
+
+                                                                                                            //Decifra RSA
+                                                                                                            //hash da mensagem
+                                                                                                            decifraRSAdaMensagem = criptoRSA.desencriptar(MensagemRSAComHash, eCliente, nCliente);
+
+                                                                                                            //faz o hash da mensagem recebida AES
+                                                                                                            hashDoTextoCifradoAES = ImplSHA3.resumo(MensagemAES.getBytes(ImplSHA3.UTF_8), algoritmoHash); //Ver possibilidade de mudar algoritmo hash
+
+                                                                                                            //armazena o resultado do hash no formato String
+                                                                                                            resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
+
+                                                        
+
+                                                                                                            //verifica se os hash são iguais
+                                                                                                            if (resultadoDoHash.equals(decifraRSAdaMensagem)) {
+                                                                                                                //como os hash bateram, entao agora eu posso decifrar a mensagem AES e usa-la
+                                                                                                                
+                                                                                                                    //Decifra AES
+                                                                                                                        try {
+                                                                                                                            decifraAESdaMensagem = criptoAES.decifrar(MensagemAES, chaveAES);
+                                                                        
+                                                                                                                            mensagem = decifraAESdaMensagem;
+                                                                                                                        
+                                                                                                                        } catch (Exception e) {
+                                                                                                                            
+                                                                                                                            e.printStackTrace();
+                                                                                                                        }
+                                                                                                                
+                                                                                                            }
+
+                                                                                                //******************************************************************************************************
+
+                                                                                                saidaServidor.println(cabecalho);
+                                                                                                saidaServidor.println(mensagem);
+
+                                                                                                String resposta = scannerServidor.nextLine();
+
+                                                                                                //ENVIAR
+                                                                                                    //número para confimar que o login foi bem sucedido.
+                                                                                                    //-------------------------------------------------------------------------------------------------
+                                                                                                        //Envia para cliente mensagem cifrada em AES
+                                                                                                       
+
+                                                                                                        try {
+                                                                                                            cifrado = criptoAES.cifrar(resposta, chaveAES);
+                                                                                                        } catch (Exception e) {
+                                                                                                            // TODO Auto-generated catch block
+                                                                                                            e.printStackTrace();
+                                                                                                        }
+
+                                                                                                        saidaCliente.println(cifrado);
+                                                                        
+                                                                                                    
+                                                                                                        //Envia para cliente o hash cifrado em RSA, da mensagem cifrada em AES
+
+                                                                                                            //faz o hash do texto cifrado em AES
+                                                                                                            hashDoTextoCifradoAES = ImplSHA3.resumo(cifrado.getBytes(ImplSHA3.UTF_8), algoritmoHash);
+                                                                                                            resultadoDoHash = ImplSHA3.bytes2Hex(hashDoTextoCifradoAES);
+
+                                                                                                            //cifra o hash com RSA
+                                                                                                            hashCifradaComRSA = criptoRSA.encriptar(resultadoDoHash, dChavefirewall, nChavefirewall);
+                                                                                                            saidaCliente.println(hashCifradaComRSA);
+                                                                                                    //-------------------------------------------------------------------------------------------------
+                                                                                                
+
+
+
                    }
                    //se n for nem fazer login nem criar conta ele vai para essa opcao
-                   else{
+                   
 
-                   }
-
+                   
             }
 
             // Fechar conexões
@@ -649,4 +883,5 @@ public class Firewall implements Runnable {
             e.printStackTrace();
         }
     }
+
 }

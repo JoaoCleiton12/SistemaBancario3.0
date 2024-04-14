@@ -32,7 +32,7 @@ public class Servidor implements Runnable {
 
             int opcao = -1;
 
-            int operacao = 0;
+            int operacao = 6;
 
             Double valor;
 
@@ -52,27 +52,31 @@ public class Servidor implements Runnable {
                     entrada.nextLine();
                     
 
+                    System.out.println(opcao);
+
                     //fazer login
                     if (opcao == 1) {
-                        
+                        System.out.println("Operação de login..");
+
                         numConta = entrada.nextLine();
                         senha = entrada.nextLine();
 
                         //acessar o banco de dados
                         resposta = sistema.autenticarUser(numConta, senha);
-                        System.out.println("Login bem sucedido");
+                        
                         saida.println(resposta);
 
+                        if (resposta == true) {
+                            operacao = 0;
+                        }
+
+                        
 
                         while (operacao != 6) {
   
                             operacao = entrada.nextInt();
-
-                            System.out.println(operacao);
-
                             
-                            
-
+                            System.out.println("Login bem sucedido");
                             //saque
                             if (operacao == 1) {
                                
@@ -123,7 +127,21 @@ public class Servidor implements Runnable {
 
                             //transferencia
                             if (operacao == 3) {
-                                
+                                System.out.println("Operação de transferencia em andamento..");
+
+                                entrada.nextLine();
+
+                                mensagem = entrada.nextLine();
+
+                                String[] contaDestinoEvalor = mensagem.split(" ");
+
+                                String contaDestino = contaDestinoEvalor[0];
+                                Double valorTrans = Double.parseDouble(contaDestinoEvalor[1]);
+
+                                String retorno = sistema.transferência(numConta, contaDestino, valorTrans);
+
+                                saida.println(retorno);
+
                             }
 
                             //saldo
@@ -137,11 +155,27 @@ public class Servidor implements Runnable {
 
                             //Investimentos
                             if (operacao == 5) {
-                                System.out.println("Operação de investimento em andamento..");
+                               
 
-                                int tipoivestimento = entrada.nextInt();
+                                entrada.nextLine();
 
-                                String retorno = sistema.investimentos(numConta, tipoivestimento);
+                                mensagem = entrada.nextLine();
+                                valor = Double.parseDouble(mensagem);
+
+
+                                System.out.println("Operação de deposito em andamento..");
+
+                                int tipo = 0;
+                                
+                                if (valor == 1) {
+                                    tipo = 1;
+                                }else{
+                                    tipo = 2;
+                                }
+
+                               String retorno = sistema.investimentos(numConta, tipo);
+
+                               System.out.println(retorno);
 
                                 saida.println(retorno);
 
@@ -154,18 +188,36 @@ public class Servidor implements Runnable {
                        
 
                     }
-                    
-                
+
+                    if (opcao == 2) {
+
+                       
+                        mensagem = entrada.nextLine();
+
+                        String[] nomeCpfEnderecoTelefoneSenhaCriada;
+                        String nome = "";
+                        String cpf = "";
+                        String endereco = "";
+                        String telefone = "";
+                        String senhaCriada = "";
+
+                        nomeCpfEnderecoTelefoneSenhaCriada = mensagem.split(";");
+
+                        nome = nomeCpfEnderecoTelefoneSenhaCriada[0];
+                        cpf = nomeCpfEnderecoTelefoneSenhaCriada[1];
+                        endereco = nomeCpfEnderecoTelefoneSenhaCriada[2];
+                        telefone = nomeCpfEnderecoTelefoneSenhaCriada[3];
+                        senhaCriada = nomeCpfEnderecoTelefoneSenhaCriada[4];
+
+                        String retorno = sistema.criarContaCorrente(nome, cpf, endereco, telefone, senhaCriada);
+                        System.out.println("Operação de criar conta...");
+
+                        saida.println(retorno);
 
 
-                // // Envia mensagem para o firewall
-                // System.out.println("Digite uma mensagem para enviar ao firewall: ");
-                // mensagem = "chavepublica";
-                // if (mensagem.equals("fim")) {
-                //     conexao = false;
-                //     break;
-                // }
-                // saida.println(mensagem);
+                    }
+
+               
             }
 
             // Fechar conexões

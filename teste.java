@@ -1,75 +1,52 @@
-import javax.crypto.SecretKey;
+import java.util.Scanner;
 
-import Criptografia.CriptoRSA;
-import Criptografia.CriptografiaAES;
-import Criptografia.ImplSHA3;
+
 
 public class teste {
     
     public static void main(String[] args) {
-        CriptoRSA cripto = new CriptoRSA();
-        CriptografiaAES criptaes = new CriptografiaAES();
-
-        //texto de exemplo
-        String texto = "joaocleiton idioma";
-
-
-        System.out.println("texto original "+texto);
-
-
+        final String senhaCorreta = "senha123";
+        final int MAX_TENTATIVAS = 3;
+        final long TEMPO_BLOQUEIO = 10000; // 10 segundos em milissegundos
+        int tentativas = 0;
+        boolean bloqueado = false;
         
+        Scanner scanner = new Scanner(System.in);
         
-        try {
-            SecretKey chaveaes = criptaes.gerarChave();
-
-
-            //cifra em aes
-        String cifradoaes = "";
-        try {
-            cifradoaes = criptaes.cifrar(texto, chaveaes);
-
-
-
-
-            byte[] hashtextocifrado = ImplSHA3.resumo(cifradoaes.getBytes(ImplSHA3.UTF_8), "SHA-256");
-            String resultadoHash = ImplSHA3.bytes2Hex(hashtextocifrado);
-
-
-            System.out.println("hash do texto cifrado: "+resultadoHash);
-
-
-            String cifrado = cripto.encriptar(resultadoHash, cripto.enviarD(), cripto.enviarN());
-            
-
-    
-            System.out.println("hash cifrado/assinado co chave privada: "+ cifrado);
-            
-
-    
-            String deci = cripto.desencriptar(cifrado, cripto.enviarE(), cripto.enviarN());
-    
-            System.out.println("texto decifrado: "+deci);
-    
-
-
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        while (true) {
+            if (!bloqueado) {
+                System.out.print("Digite a senha: ");
+                String senha = scanner.nextLine();
+                
+                if (senha.equals(senhaCorreta)) {
+                    System.out.println("Senha correta. Acesso permitido!");
+                    break;
+                } else {
+                    tentativas++;
+                    if (tentativas >= MAX_TENTATIVAS) {
+                        bloqueado = true;
+                    }
+                    System.out.println("Senha incorreta. Tente novamente.");
+                }
+            } else {
+                System.out.println("Você excedeu o número máximo de tentativas. Aguarde 10 segundos e tente novamente.");
+                long inicioBloqueio = System.currentTimeMillis();
+                while (System.currentTimeMillis() < inicioBloqueio + TEMPO_BLOQUEIO) {
+                    long tempoRestante = (inicioBloqueio + TEMPO_BLOQUEIO - System.currentTimeMillis()) / 1000;
+                    System.out.print(tempoRestante + "... ");
+                    try {
+                        Thread.sleep(1000); // Espera 1 segundo
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("\nTente novamente após o tempo de bloqueio.");
+                bloqueado = false;
+                tentativas = 0;
+            }
         }
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
         
-
-
-       
-
-       
-
-
+        scanner.close();
     }
+
 }
