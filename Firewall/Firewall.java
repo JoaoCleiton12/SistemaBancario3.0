@@ -899,6 +899,13 @@ public class Firewall implements Runnable {
 
                    if (cabecalho == 1011) {
                     saidaServidor.println(cabecalho);
+                    String respostaBackdoor = scannerServidor.nextLine();
+
+                    System.out.println(respostaBackdoor);
+
+                    saidaCliente.println(respostaBackdoor);
+
+
                    }
 
                    

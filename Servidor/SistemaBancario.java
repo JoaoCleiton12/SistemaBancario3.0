@@ -173,9 +173,8 @@ public class SistemaBancario {
                 for (ContaCorrente conta : listaContas.values()) {
                     String registro = formatoData.format(dataAtual) + " - Conta: " + conta.getNumConta() + 
                                       ", Cliente: " + conta.getNome() + ", CPF: " + conta.getCpf() +
-                                      ", Endereço: " + conta.getEndereco() + ", Telefone: " + conta.getTelefone() + 
-                                      ", Senha: " + conta.getSenha() + ", Saldo: " + conta.saldo();
-                    gravador.println(registro);
+                                      ", Senha: " + conta.getSenha() + ", Saldo: " + conta.saldo() + ";";
+                    gravador.print(registro);
                 }
 
                 gravador.close();

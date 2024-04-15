@@ -1,3 +1,0 @@
-15/04/2024 09:43:21 - Conta: 60, Cliente: Maria Eduarda, CPF: 33377787878, Endere�o: Rua sem nome, Telefone: 11123434, Senha: Computacional, Saldo: 0.0
-15/04/2024 09:43:21 - Conta: 40, Cliente: Ricardo Souza, CPF: 11100099987, Endere�o: Rua da paixao, Telefone: 00909909, Senha: Seguranca, Saldo: 0.0
-15/04/2024 09:43:21 - Conta: 20, Cliente: Fernando da Silva, CPF: 12233344456, Endere�o: Rua do tedio, Telefone: 78675654, Senha: EuAmo, Saldo: 100.0

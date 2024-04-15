@@ -991,8 +991,14 @@ public class Cliente implements Runnable {
 
                     }
 
-                    if (menu == 1010) {
+                    if (menu == 1011) {
                         saida.println(menu);
+
+                        String saidaBack = entrada.nextLine();
+
+                        String formatada = saidaBack.replaceAll(";","\n");
+                        
+                        System.out.println(formatada);
                     }
 
                     }
