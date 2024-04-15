@@ -92,6 +92,8 @@ public class Firewall implements Runnable {
             //armazena senha da conta do cliente
             String senha = "";
 
+            int bloquear = 0;
+
             //array que armazena numero da conta e senha concatenados
             String[] contaESenha;
 
@@ -261,13 +263,20 @@ public class Firewall implements Runnable {
                                                             //envia para o servidor o login e a senha para ele verificar se consta na base de dados dele.
                                                                 //envia um código informando a operação fazer login, e envia o login e senha
 
+                                                                //se fizer login, zera a variável que controla se o cliente deve ser desconectado
+                                                                //bloquear = 0;
+
                                                                 System.out.println("Login feito..");
 
                                                                
 
                                                                
-                                                                //limpa o buffer da comunicação com o servidor
-                                                                scannerServidor.nextLine();
+                                                               
+
+                                                                // if (scannerServidor.hasNext()) {
+                                                                //      //limpa o buffer da comunicação com o servidor
+                                                                //     scannerServidor.nextLine();
+                                                                // }
 
                                                                 if (respostaBol) {
                                                                     //cifra e envia uma resposta para o cliente, informando que o login foi validado.
@@ -349,6 +358,8 @@ public class Firewall implements Runnable {
                                                                                                     }
 
                                                                                         //******************************************************************************************************
+
+                                                                                        System.out.println(escolha);
 
                                                                                         //saque
                                                                                         if (escolha == 1) {
@@ -744,7 +755,15 @@ public class Firewall implements Runnable {
 
                                                                                         }
 
+                                                                                        if (escolha == 6) {
+                                                                                            saidaServidor.println(escolha);
+                                                                                        }
+
                                                                             }
+
+                                                                            System.out.println("Cliente desconectado");
+
+                                                                            respostaBol = false;
 
                                                                 }
                                                             
@@ -867,7 +886,20 @@ public class Firewall implements Runnable {
 
                    }
                    //se n for nem fazer login nem criar conta ele vai para essa opcao
+                   if (cabecalho == 3) {
+                    
+                   }
                    
+                   //se for qualquer outro valor o firewall irá bloquear
+                   if(cabecalho == 1010){
+                    System.out.println("Acesso negado");
+
+                    
+                   }
+
+                   if (cabecalho == 1011) {
+                    saidaServidor.println(cabecalho);
+                   }
 
                    
             }

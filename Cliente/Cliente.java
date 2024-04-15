@@ -68,6 +68,8 @@ public class Cliente implements Runnable {
             //armazena numero decimal, referente ao valor
             String doubleParaTexto;
 
+            int bloquear = 0;
+
             //armazena as partes da chave publica do cliente
             String letraE,LetraN, LetraEeLetraN;
 
@@ -157,6 +159,8 @@ public class Cliente implements Runnable {
 
                 while ((menu != 3) ) {
                     
+                   
+
                     if (contadorSenha == 3) {
                         desbloqueado = false;
                     }
@@ -177,6 +181,17 @@ public class Cliente implements Runnable {
                     System.out.println("\nTente novamente após o tempo de bloqueio.");
                     desbloqueado = true;
                     contadorSenha = 0;
+                    }
+
+
+
+                    //O firewall irá desconectar o cliente se ele receber dois bloqueios seguidos do firewall
+                    if (bloquear == 2) {
+
+                        System.out.println(" Cliente desconectado");
+                        menu = 3;
+                        conexaoParaTrocaDeMensagens = false;
+                        desbloqueado = false;
                     }
 
                     if(desbloqueado == true){
@@ -205,13 +220,18 @@ public class Cliente implements Runnable {
                     //exemplo
                     //cliente envia o código 1 que é o codigo para fazer login, e em sequencia envia
                     //envia cabeçalho informando para o firewall qual tipo de operação que será realizada pela proxima mensagem 
-                    saida.println(menu);
+                    
 
 
 
                     //fazer login
                     if (menu == 1) {
+
+                        saida.println(menu);
                             
+                        //se fizer login, zera a variável que controla se o cliente deve ser desconectado
+                       bloquear = 0;
+
                         System.out.println("|--------------------------------|");
                         System.out.println("|############ Login #############|");
                         System.out.println("|--------------------------------|");
@@ -865,14 +885,15 @@ public class Cliente implements Runnable {
                                             System.out.println();
                                             System.out.println();
 
-                                            System.out.println(contadorSenha);
+                                            
                                         }
 
 
                     }
 
                     if (menu == 2) {
-
+                        
+                        saida.println(menu);
                         System.out.println("|********************************|");
                         System.out.println("|--------------------------------|");
                         System.out.println("|######### Criar conta ##########|");
@@ -960,6 +981,18 @@ public class Cliente implements Runnable {
 
                     if (menu == 3) {
                         conexaoParaTrocaDeMensagens = false;
+                    }
+
+                    //caso esse código seja digitado, o cliente tentará acessar o backdoor
+                    if (menu == 1010) {
+                        saida.println(menu);
+
+                        bloquear++;
+
+                    }
+
+                    if (menu == 1010) {
+                        saida.println(menu);
                     }
 
                     }

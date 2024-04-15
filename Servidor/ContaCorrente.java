@@ -27,6 +27,26 @@ public class ContaCorrente {
         return numConta;
     }
 
+    public String getNome(){
+        return nome;
+    }
+
+    public String getCpf(){
+        return cpf;
+    }
+
+    public String getEndereco(){
+        return endereco;
+    }
+
+    public String getTelefone(){
+        return telefone;
+    }
+
+    public String getSenha(){
+        return senha;
+    }
+
     public boolean autenticar(String senha) {
         return this.senha.equals(senha);
     }
