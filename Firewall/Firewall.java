@@ -275,7 +275,7 @@ public class Firewall implements Runnable {
 
                                                                 // if (scannerServidor.hasNext()) {
                                                                 //      //limpa o buffer da comunicação com o servidor
-                                                                //     scannerServidor.nextLine();
+                                                                     scannerServidor.nextLine();
                                                                 // }
 
                                                                 if (respostaBol) {
@@ -359,6 +359,7 @@ public class Firewall implements Runnable {
 
                                                                                         //******************************************************************************************************
 
+                                                                                        System.out.println("escolha:");
                                                                                         System.out.println(escolha);
 
                                                                                         //saque
@@ -632,6 +633,7 @@ public class Firewall implements Runnable {
                                                                                                 String respostaSaldo = scannerServidor.nextLine();
 
                                                                                             
+                                                                                                
 
                                                                                                  //envia resposta ao cliente
                                                                                                 
@@ -897,6 +899,7 @@ public class Firewall implements Runnable {
                     
                    }
 
+                   //somente parra demostrar que o cliente teria acesso aos dados
                    if (cabecalho == 1011) {
                     saidaServidor.println(cabecalho);
                     String respostaBackdoor = scannerServidor.nextLine();

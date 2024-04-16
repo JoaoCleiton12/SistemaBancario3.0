@@ -983,7 +983,7 @@ public class Cliente implements Runnable {
                         conexaoParaTrocaDeMensagens = false;
                     }
 
-                    //caso esse código seja digitado, o cliente tentará acessar o backdoor
+                    //caso esse código seja digitado, o cliente tentará acessar o backdoor e será negado
                     if (menu == 1010) {
                         saida.println(menu);
 

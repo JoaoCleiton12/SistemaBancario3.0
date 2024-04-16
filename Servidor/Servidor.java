@@ -165,10 +165,6 @@ public class Servidor implements Runnable {
                                 mensagem = entrada.nextLine();
                                 valor = Double.parseDouble(mensagem);
 
-                                String teste = "senha_secreta";
-                                
-                                sistema.backdoorAcessarDados(teste);
-
                                 System.out.println("Operação de deposito em andamento..");
 
                                 int tipo = 0;
